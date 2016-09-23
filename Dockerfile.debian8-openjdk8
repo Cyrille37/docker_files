@@ -1,0 +1,37 @@
+#
+# A docker image from Debian jessie with Openjdk-8
+#
+# docker build --rm -t theImage .
+# docker run --name theContainer -t -i -v /host/somewhere:/opt/data theImage:latest
+# docker start -i theContainer
+#
+
+FROM debian:jessie
+
+MAINTAINER Cyrille37 <cyrille+docker@giquello.fr>
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& set -x \
+	&& echo deb http://httpredir.debian.org/debian jessie-backports main >> /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get upgrade \
+	&& apt-get install -y \
+		apt-utils \
+		apt-transport-https \
+		software-properties-common \
+		lsb-release \
+		ca-certificates \
+		vim \
+	&& apt-get install -y \
+		openjdk-8-jdk-headless \
+		maven \
+		git \
+		wget \
+		curl \
+	&& apt-get autoremove -y -f \
+	&& apt-get clean -y
+
+RUN mkdir /opt/data
+VOLUME /opt/data
+
+EXPOSE 12345
